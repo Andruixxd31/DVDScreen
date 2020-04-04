@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-// import java.util.Random;
+import java.util.Random;
 
 public class DVDPanel extends JPanel implements Runnable {
 
@@ -8,6 +8,7 @@ public class DVDPanel extends JPanel implements Runnable {
 
     private Color color;
     private final Image DVD;
+    private int rndX, rndY;
 
     private int posX, posY; // Vaiables that will be randomly selected to chose the first position of the
                                   // figure
@@ -15,8 +16,12 @@ public class DVDPanel extends JPanel implements Runnable {
     private int dirX, dirY;
     private int fW, fH; // height and width of the figure
 
-    public final int WIDTH = 800, HEIGHT = 600; // width and height of the panel
+    private final int WIDTH = 800, HEIGHT = 600; // width and height of the panel
 
+    private int numberBounces;
+    private int colorSelector;
+    private Color[] colors;
+    
     // *----------- Constructor -------------------
     DVDPanel() {
         super();
@@ -29,7 +34,18 @@ public class DVDPanel extends JPanel implements Runnable {
         this.dirY = 1;
         this.fW = 100;
         this.fH = 50;
-        
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        Random ran = new Random();
+        this.rndX = ran.nextInt(WIDTH - fW); //number between 0 the limit before the figure gets to the edge
+        this.rndY = ran.nextInt(HEIGHT - fH);
+
+
+        this.colors = new Color[]
+        {
+            Color.RED, Color.CYAN, Color.YELLOW, Color.GREEN,
+            Color.PINK, Color.ORANGE
+        };
         final Thread hilo = new Thread(this); // will help us do multiple process and move our logo in run();
         hilo.start();
     }
@@ -42,11 +58,16 @@ public class DVDPanel extends JPanel implements Runnable {
     }
 
     public void paintLogo(final Graphics g) {
-        g.setColor(color.GREEN); 
-        g.fillRect(this.posX, this.posY, this.fW, this.fH);
 
-        //dont multiply by contants, code for a variable middle point
+        //Optimize code
+        g.setColor(this.colors[this.colorSelector % 6]);
+        g.fillRect(this.posX, this.posY, this.fW, this.fH);
         g.drawImage(this.DVD, (int)(this.posX + fW * .25), (int)(this.posY + fH * .3), this.fW / 2, this.fH / 2, this);
+    }
+
+
+    public void incrementColorSelector(){
+        ++this.colorSelector;
     }
 
     // *----------- Methods generated from implementations -------------------
@@ -56,25 +77,35 @@ public class DVDPanel extends JPanel implements Runnable {
         while (true) { //?make a clamp like method
             try {
                 this.xM += 8 * this.dirX;
-                this.yM += 6 * this.dirY;
-                this.posX = 500 + this.xM;
-                this.posY = 300 + this.yM;
+                this.yM += 7 * this.dirY;
+                this.posX = this.rndX + this.xM;
+                this.posY = this.rndY + this.yM;
 
+                //?Make clamp like method
                 //?Review code for optimization
                 if (this.posX <= 0){
                     this.dirX *= -1;
                     this.posX = 1;
+                    ++this.numberBounces;
                 }else if (this.posX + fW >= WIDTH){
                     this.dirX *= -1;
                     this.posX = WIDTH - fW - 1;
+                    ++this.numberBounces;
                 }
                 //?Review code for optimization
                 if (this.posY <= 0){
                     this.dirY *= -1;
                     this.posY = 1;
+                    ++this.numberBounces;
                 }else if (this.posY + fH >= HEIGHT){
                     this.dirY *= -1;
                     this.posY = HEIGHT - fH - 1;
+                    ++this.numberBounces;
+                }
+
+                if (this.numberBounces % 5 == 0){
+                    incrementColorSelector();
+                    this.numberBounces = 1;
                 }
                 this.repaint();
                 Thread.sleep(20);
