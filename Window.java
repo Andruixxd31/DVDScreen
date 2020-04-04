@@ -1,7 +1,4 @@
 import javax.swing.*;
-import java.awt.*; //can use borderlayout to add control panels if wanted
-
-
 
 public class Window extends JFrame{
 

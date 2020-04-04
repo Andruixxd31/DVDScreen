@@ -4,24 +4,26 @@ import java.util.Random;
 
 public class DVDPanel extends JPanel implements Runnable {
 
+    Window window;
+
     //*----------- Atributes -------------------
 
     private Color color;
     private final Image DVD;
-    private int rndX, rndY;
+    private final int rndX, rndY;
 
     private int posX, posY; // Vaiables that will be randomly selected to chose the first position of the
-                                  // figure
+                            // figure
     private int xM, yM; // variables that will move the figure
     private int dirX, dirY;
-    private int fW, fH; // height and width of the figure
+    private final int fW, fH; // height and width of the figure
 
     private final int WIDTH = 800, HEIGHT = 600; // width and height of the panel
 
     private int numberBounces;
     private int colorSelector;
-    private Color[] colors;
-    
+    private final Color[] colors;
+
     // *----------- Constructor -------------------
     DVDPanel() {
         super();
@@ -36,7 +38,7 @@ public class DVDPanel extends JPanel implements Runnable {
         this.fH = 50;
         // nextInt is normally exclusive of the top value,
         // so add 1 to make it inclusive
-        Random ran = new Random();
+        final Random ran = new Random();
         this.rndX = ran.nextInt(WIDTH - fW); //number between 0 the limit before the figure gets to the edge
         this.rndY = ran.nextInt(HEIGHT - fH);
 
