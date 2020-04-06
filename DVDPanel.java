@@ -82,7 +82,6 @@ public class DVDPanel extends JPanel implements Runnable {
                 this.yM += 7 * this.dirY;
                 this.posX = this.rndX + this.xM;
                 this.posY = this.rndY + this.yM;
-
                 //?Make clamp like method
                 //?Review code for optimization
                 if (this.posX <= 0){
